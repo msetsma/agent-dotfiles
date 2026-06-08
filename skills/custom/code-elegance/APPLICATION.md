@@ -1,24 +1,24 @@
 # Code Elegance Application Guide
 
-Use these prompts while editing or reviewing code in any language. Examples use pseudocode only to communicate the shape of the refactor; translate to the target language's idioms.
+Use prompts while editing/reviewing code in any language. Examples use pseudocode only to show refactor shape; translate to target language idioms.
 
 ## Quick Scan
 
-Ask these questions in order:
+Ask in order:
 
-1. What is the main path, and is it visually obvious?
+1. What is main path, and is it visually obvious?
 2. Which variables change value, and can any become derived values?
-3. Which conditions are really validation or boundary checks?
+3. Which conditions are validation or boundary checks?
 4. Which literals, booleans, or comments hide domain language?
-5. Which branch exists only to choose a handler, strategy, or data value?
+5. Which branch only chooses handler, strategy, or data value?
 6. Which loops manually implement filtering, mapping, existence checks, or first-match lookup?
-7. Which expensive work happens before it is definitely needed?
+7. Which expensive work happens before definitely needed?
 
 ## Refactor Recipes
 
 ### Flatten Nested Flow
 
-Use when nested conditionals make the happy path hard to see.
+Use when nested conditionals hide happy path.
 
 ```text
 function ship(order):
@@ -32,18 +32,18 @@ function ship(order):
     return create shipment for order
 ```
 
-Do not flatten if each nested level represents meaningful structure that would be less clear as independent guards.
+Do not flatten if each nested level represents meaningful structure clearer as nesting than independent guards.
 
 ### Replace Flag Variables
 
-Use the language's existence, universal, first-match, or direct-return helper when a loop only tracks whether something happened.
+Use language's existence, universal, first-match, or direct-return helper when loop only tracks whether something happened.
 
 ```text
 has_expired_item = items contains any item where item is expired
 first_admin = first user where user is admin, or none
 ```
 
-Keep the loop when it has side effects, multiple outputs, or needs careful step-by-step names.
+Keep loop when it has side effects, multiple outputs, or needs careful step-by-step names.
 
 ### Name Business Rules
 
@@ -54,11 +54,11 @@ minimum_balance = order.total + transaction_fee
 has_sufficient_funds = account.balance >= minimum_balance
 ```
 
-Avoid names like `is_valid_condition` or `calculated_value`; those add noise without meaning.
+Avoid names like `is_valid_condition` or `calculated_value`; they add noise without meaning.
 
 ### Centralize Mode-Based Behavior
 
-Use a dispatch table/map, pattern match, enum method, or strategy object when branches only select a handler.
+Use dispatch table/map, pattern match, enum method, or strategy object when branches only select handler.
 
 ```text
 handlers = {
@@ -73,11 +73,11 @@ if handler is missing:
 return handler(payload)
 ```
 
-Keep an `if`/`elif` chain when each case has unique control flow, multiple statements, or important inline context.
+Keep `if`/`elif` chain when each case has unique control flow, multiple statements, or important inline context.
 
 ### Convert Raw Input At Boundaries
 
-Prefer parsing into a typed or validated value once. Use a value object, newtype, branded type, record, struct, class, or factory according to the language.
+Prefer parsing into typed/validated value once. Use value object, newtype, branded type, record, struct, class, or factory by language.
 
 ```text
 type EmailAddress:
@@ -89,11 +89,11 @@ type EmailAddress:
         return EmailAddress(normalized raw)
 ```
 
-Do not add a domain type for throwaway internal values with no invariant.
+Do not add domain type for throwaway internal values with no invariant.
 
 ### Separate Commands From Queries
 
-Avoid methods that both answer a question and mutate state unless the convention is explicit.
+Avoid methods that both answer question and mutate state unless convention is explicit.
 
 ```text
 if cart.can_apply(discount):
@@ -117,7 +117,7 @@ type Report:
         return cached_rows
 ```
 
-Do not make everything lazy. Eager failure is often better for required dependencies.
+Do not make everything lazy. Eager failure often better for required dependencies.
 
 ## Review Comment Template
 
@@ -131,16 +131,16 @@ Trade-off: preserves behavior and lowers branch depth without adding a new abstr
 
 ## Skip Conditions
 
-Skip the refactor when:
+Skip refactor when:
 
-- The code is generated or intentionally mirrors an external schema.
-- The local style is different but consistent.
-- The "elegant" version would require readers to know an uncommon abstraction.
-- Tests are missing and the behavior is subtle enough that a cleanup could hide a regression.
-- The pattern solves a theoretical issue but the current code is simple and stable.
+- Code is generated or intentionally mirrors external schema.
+- Local style differs but is consistent.
+- "Elegant" version requires uncommon abstraction knowledge.
+- Tests missing and behavior subtle enough that cleanup could hide regression.
+- Pattern solves theoretical issue but current code is simple and stable.
 
 ## Coordination With Other Skills
 
-- Use `code-smells` first when the task is review-heavy and you need to identify risks.
-- Use `naming-conventions` when most of the improvement depends on choosing better names.
-- Use `code-elegance` when the desired output is an implemented refactor or a ranked set of concrete cleanup moves.
+- Use `code-smells` first when task is review-heavy and risks need identification.
+- Use `naming-conventions` when improvement depends mostly on better names.
+- Use `code-elegance` when desired output is implemented refactor or ranked cleanup moves.

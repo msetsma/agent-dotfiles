@@ -1,10 +1,10 @@
 # Naming Conventions Reference
 
-Use this reference when [SKILL.md](SKILL.md) is not enough to choose a name.
+Use when [SKILL.md](SKILL.md) is too short to choose a name.
 
 ## Case Style Details
 
-Case conventions vary by language, framework, and team. The surrounding file wins.
+Case varies by language, framework, team. Surrounding file wins.
 
 | Ecosystem | Common Defaults |
 |---|---|
@@ -17,26 +17,26 @@ Case conventions vary by language, framework, and team. The surrounding file win
 | Go | `MixedCaps`; exported identifiers start uppercase, unexported identifiers start lowercase; avoid underscores in identifiers. |
 | Kotlin / Swift | `camelCase` functions and variables; `PascalCase` types; constants follow project/platform norms. |
 | Shell | Commands/functions often `snake_case` or `kebab-case`; variables commonly `UPPER_SNAKE_CASE` for exported/env values and lowercase for locals. |
-| Config / data files | Preserve the tool's schema style exactly; do not rename keys to satisfy code naming preferences. |
+| Config / data files | Preserve tool schema style exactly; do not rename keys to satisfy code naming prefs. |
 
-Acronyms should follow local convention: `httpClient`, `HttpClient`, `HTTPClient`, or `http_client`. Pick one style per codebase area and stay consistent.
+Acronyms follow local convention: `httpClient`, `HttpClient`, `HTTPClient`, or `http_client`. Pick one style per codebase area; stay consistent.
 
 ## Verb Guide
 
-Use the verb that most accurately describes behavior. Do not invent near-synonyms for an established concept.
+Use verb that best matches behavior. Do not invent near-synonyms for established concept.
 
 ### CRUD / Resource Verbs
 
 | Verb | Use For | Notes |
 |---|---|---|
-| `get` | Retrieve one expected item or property | Decide repo-wide whether missing values raise, return null/None, or return an optional/result type. |
+| `get` | Retrieve one expected item/property | Decide repo-wide whether missing values raise, return null/None, or return optional/result type. |
 | `list` | Retrieve multiple items | Prefer over `getAll`. |
-| `create` | Create a new resource | Should not merely assign a property. |
-| `update` | Modify an existing resource | Usually implies persistence or external state. |
-| `delete` | Remove a resource | Prefer over mixing `remove`, `destroy`, and `delete` without semantic distinction. |
-| `set` | Assign a value to an existing property/object | Use cardinality accurately: `setTag` vs `setTags`. |
+| `create` | Create new resource | Should not merely assign property. |
+| `update` | Modify existing resource | Usually implies persistence/external state. |
+| `delete` | Remove resource | Prefer over mixing `remove`, `destroy`, and `delete` without semantic distinction. |
+| `set` | Assign value to existing property/object | Cardinality matters: `setTag` vs `setTags`. |
 | `deploy` | Perform deployment side effects | Do not use for building deployment config. |
-| `build` | Construct and return an object | Should be side-effect free. |
+| `build` | Construct and return object | Should be side-effect free. |
 
 ### Non-CRUD Verbs
 
@@ -47,20 +47,20 @@ Use the verb that most accurately describes behavior. Do not invent near-synonym
 | `parse` | Raw input to structured data | `parseConfig`, `parseModelUri` |
 | `format`, `render` | Structured data to text/markup/output | `formatStatus`, `renderTemplate` |
 | `serialize`, `deserialize` | Wire/storage conversion | `serializeConfig`, `deserializePayload` |
-| `compute`, `calculate` | Derive a value | `computeScore`, `calculateTotal` |
-| `handle`, `on` | Event handling/callbacks | `handleClick`, `onMessage` |
-| `ensure` | Idempotently make a condition true | `ensureWorkspaceExists` |
+| `compute`, `calculate` | Derive value | `computeScore`, `calculateTotal` |
+| `handle`, `on` | Event handlers/callbacks | `handleClick`, `onMessage` |
+| `ensure` | Idempotently make condition true | `ensureWorkspaceExists` |
 | `find` | Search that may return nothing | `findUserByEmail` |
-| `apply`, `process`, `run`, `execute` | Perform a broad operation | Prefer a more specific verb when one exists. |
+| `apply`, `process`, `run`, `execute` | Broad operation | Prefer more specific verb when available. |
 
 ## Resource And API Naming
 
-These conventions apply to code identifiers, REST paths, RPC methods, GraphQL fields, CLI commands, and other API surfaces.
+Apply to code identifiers, REST paths, RPC methods, GraphQL fields, CLI commands, and API surfaces.
 
-- Pick one resource noun per concept and reuse it everywhere.
-- Use singular for one resource and plural for collections.
+- Pick one resource noun per concept; reuse everywhere.
+- Singular for one resource; plural for collections.
 - Prefer general-to-specific order: `model_version_status`, `modelVersionStatus`, `ModelVersionStatus`.
-- Mirror code and API names when practical.
+- Mirror code/API names when practical.
 - Keep nesting shallow and predictable.
 
 ```text
@@ -75,7 +75,7 @@ listModelVersions(id)               GET    /models/{id}/versions
 
 ## Qualifier Naming
 
-Use qualifiers based on concept and cardinality.
+Use qualifiers by concept and cardinality.
 
 | Qualifier | Meaning | Cardinality |
 |---|---|---|
@@ -97,13 +97,13 @@ addTag(modelId, tag)
 
 ## Preposition Semantics
 
-Prefer no preposition when the argument is obvious: `getModel(modelId)`, not `getModelWithId(modelId)`.
+Prefer no preposition when argument is obvious: `getModel(modelId)`, not `getModelWithId(modelId)`.
 
 | Preposition | Use For | Examples |
 |---|---|---|
-| `by` | Lookup, filtering, or sorting by a property value | `listOrdersByStatus`, `getModelVersionByTag`, `sortByCreatedAt` |
-| `to` | Transformation or conversion | `configToPayload`, `modelToDict`, `celsiusToFahrenheit` |
-| `for` | Association, scope, audience, ownership, or belonging | `getConfigForEndpoint`, `listPermissionsForUser` |
+| `by` | Lookup, filtering, or sorting by property value | `listOrdersByStatus`, `getModelVersionByTag`, `sortByCreatedAt` |
+| `to` | Transformation/conversion | `configToPayload`, `modelToDict`, `celsiusToFahrenheit` |
+| `for` | Association, scope, audience, ownership, belonging | `getConfigForEndpoint`, `listPermissionsForUser` |
 
 `by` vs `for`:
 
@@ -114,7 +114,7 @@ Prefer no preposition when the argument is obvious: `getModel(modelId)`, not `ge
 
 ## Review Notes
 
-- These guidelines should inform review comments, not create churn for harmless existing names.
+- Guidelines inform review comments; they should not create churn for harmless existing names.
 - Favor clarity and local consistency over strict conformance.
 - Flag intentional deviations instead of silently renaming public APIs or persisted schema keys.
-- Be careful with generated code, external schemas, public API compatibility, database columns, and config keys; renaming may be a breaking change.
+- Take care with generated code, external schemas, public API compatibility, database columns, config keys; renaming may break users/data.

@@ -5,20 +5,20 @@ description: Provides language-agnostic naming guidelines for consistent, predic
 
 # Naming Conventions
 
-Apply these guidelines to names you write or review in any language. They are defaults to guide judgment, not rules to enforce mechanically.
+Apply when writing/reviewing names in any language. Defaults guide judgment; not mechanical rules.
 
 ## Priority Order
 
-1. Match the surrounding codebase.
-2. Match the language or framework idiom.
-3. Use this skill's defaults when there is no stronger local pattern.
-4. Flag meaningful inconsistencies instead of silently creating a third style.
+1. Match surrounding codebase.
+2. Match language/framework idiom.
+3. Use this skill's defaults if no stronger local pattern.
+4. Flag meaningful inconsistencies; avoid creating third style.
 
 ## Core Principle
 
-Prefer predictability over cleverness. A developer should be able to guess a name from sibling names and find related operations through autocomplete.
+Prefer predictability over cleverness. Developer should guess name from siblings and find related ops via autocomplete.
 
-Before adding or changing a name, scan nearby code for the established pattern. Do not mix two names for the same concept, such as `fetchUser`, `retrieveUser`, and `getUser`, unless the codebase already makes a real semantic distinction.
+Before adding/changing name, scan nearby code. Do not mix names for same concept, like `fetchUser`, `retrieveUser`, and `getUser`, unless codebase makes real semantic distinction.
 
 ## Case Style
 
@@ -31,11 +31,11 @@ Case is language-dependent. Do not impose one language's style on another.
 | C# | `PascalCase` methods/properties | `camelCase` locals/params | `PascalCase` |
 | Go | `camelCase` unexported, `PascalCase` exported | same | same |
 
-Constants, files, modules, packages, and private/internal names vary more by ecosystem. Follow the existing file first; see [REFERENCE.md](REFERENCE.md) for common defaults.
+Constants, files, modules, packages, private/internal names vary by ecosystem. Follow existing file first; see [REFERENCE.md](REFERENCE.md) for defaults.
 
 ## Verb Selection
 
-Functions and methods that do something should use a clear conventional verb. Treat these as a palette, not a whitelist.
+Functions/methods that do something need clear conventional verb. Palette, not whitelist.
 
 | Verb | Meaning |
 |---|---|
@@ -50,42 +50,42 @@ Functions and methods that do something should use a clear conventional verb. Tr
 
 Common non-CRUD verbs: `is`, `has`, `can`, `should`, `validate`, `parse`, `format`, `render`, `serialize`, `deserialize`, `compute`, `calculate`, `handle`, `ensure`, `find`, `apply`, `process`, `run`, `execute`.
 
-Prefer one verb per concept. If the codebase uses `get`, do not introduce `fetch`, `retrieve`, or `grab` for the same operation.
+Prefer one verb per concept. If codebase uses `get`, do not introduce `fetch`, `retrieve`, or `grab` for same operation.
 
 ## Resource And API Names
 
 - Use one resource noun per concept: `endpoint`, not both `endpoint` and `serving_endpoint`.
-- Use singular names for one thing and plural names for collections.
-- Order from general to specific so related names group together: `modelVersion`, `modelVersionStatus`, `modelVersionTag`.
-- Mirror code and API names where practical: `listModelVersions()` maps cleanly to `GET /models/{id}/versions`.
-- Keep nesting shallow and predictable in paths, method names, and command names.
+- Singular for one thing; plural for collections.
+- Order general to specific so names group: `modelVersion`, `modelVersionStatus`, `modelVersionTag`.
+- Mirror code/API names when practical: `listModelVersions()` maps cleanly to `GET /models/{id}/versions`.
+- Keep paths, method names, command names shallow and predictable.
 
 ## Qualifiers
 
-- Use `config`, `status`, `payload`, and `latest` consistently when those concepts exist.
-- Use singular names for one value and plural names for collections.
-- Use `tag` for one tag and `tags` for a collection. Example: `setTag(modelId, tag)` sets one; `setTags(modelId, tags)` replaces many; `addTag(modelId, tag)` adds one.
+- Use `config`, `status`, `payload`, and `latest` consistently when concepts exist.
+- Singular name for one value; plural for collections.
+- Use `tag` for one tag and `tags` for collection. Example: `setTag(modelId, tag)` sets one; `setTags(modelId, tags)` replaces many; `addTag(modelId, tag)` adds one.
 
 ## Prepositions
 
-Prefer names without prepositions when parameters make the relation obvious.
+Prefer names without prepositions when params make relation obvious.
 
-- Use `by` for lookup, filtering, or sorting by a property: `listEndpointsByStatus(status)`.
+- Use `by` for lookup/filter/sort by property: `listEndpointsByStatus(status)`.
 - Use `to` for conversion: `modelToDict(model)`, `configToPayload(config)`.
-- Use `for` for association, scope, audience, or ownership: `listPermissionsForUser(userId)`.
+- Use `for` for association, scope, audience, ownership: `listPermissionsForUser(userId)`.
 
-Translate the casing to the language: `list_endpoints_by_status`, `listEndpointsByStatus`, `ListEndpointsByStatus`.
+Translate casing to language: `list_endpoints_by_status`, `listEndpointsByStatus`, `ListEndpointsByStatus`.
 
 ## Quick Checklist
 
-1. Does the name match nearby code for the same concept?
-2. Is the case idiomatic for the language and file?
-3. Does the verb accurately describe the behavior?
-4. Does cardinality match the name (`get`/`list`, singular/plural, `tag`/`tags`)?
-5. Is the resource noun consistent across code, APIs, and commands?
-6. Are qualifiers standard and ordered from general to specific?
-7. Can the preposition be dropped? If not, is it `by`, `to`, or `for` with the right meaning?
-8. Would autocomplete group related names together?
+1. Name match nearby code for same concept?
+2. Case idiomatic for language/file?
+3. Verb describe behavior accurately?
+4. Cardinality match name (`get`/`list`, singular/plural, `tag`/`tags`)?
+5. Resource noun consistent across code, APIs, commands?
+6. Qualifiers standard and ordered general to specific?
+7. Can preposition drop? If not, is it `by`, `to`, or `for` with right meaning?
+8. Autocomplete group related names?
 
 ## Examples
 

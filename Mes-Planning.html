@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mes — Hermes Agent Planning Document</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #1a1d27;
+    --panel-2: #161922;
+    --orch: #2d3250;
+    --orch-border: #6c75b0;
+    --agent: #1f3a3d;
+    --agent-border: #45a29e;
+    --source: #2a2438;
+    --source-border: #8b6fb0;
+    --rag: #3a2e1f;
+    --rag-border: #d4a24e;
+    --text: #e6e8f0;
+    --muted: #aab0c4;
+    --line: #5a6178;
+    --accent: #45a29e;
+    --danger: #ff5c6c;
+    --danger-bg: rgba(255, 92, 108, 0.12);
+    --danger-border: rgba(255, 92, 108, 0.45);
+    --border: #2a2e3c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  h1 { font-size: 2rem; font-weight: 700; margin: 0 0 6px; }
+  .lede { color: var(--muted); font-size: 0.95rem; margin: 0 0 8px; }
+  .purpose {
+    background: var(--panel); border-left: 3px solid var(--accent);
+    border-radius: 6px; padding: 14px 18px; color: var(--muted);
+    font-size: 0.9rem; margin: 24px 0 8px;
+  }
+  .purpose strong { color: var(--text); }
+
+  h2 { font-size: 1.3rem; font-weight: 700; margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h2 .tag { font-weight: 400; font-size: 0.8rem; color: var(--muted); }
+  h3 { font-size: 1.02rem; font-weight: 600; margin: 22px 0 8px; color: var(--accent); }
+
+  ul { margin: 8px 0; padding-left: 22px; }
+  li { margin: 5px 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 1px 6px; font-size: 0.85em;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--panel); font-weight: 600; }
+  tr:nth-child(even) td { background: var(--panel-2); }
+  .red-check {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1.15em; height: 1.15em; margin-right: 6px;
+    color: var(--danger); font-weight: 800; line-height: 1;
+  }
+  .status {
+    display: inline-flex; align-items: center; gap: 5px;
+    border-radius: 999px; padding: 2px 8px;
+    font-size: 0.74rem; font-weight: 700; white-space: nowrap;
+  }
+  .status-blocked {
+    color: #ffd5da; background: var(--danger-bg); border: 1px solid var(--danger-border);
+  }
+  .status-blocked::before { content: "✓"; color: var(--danger); font-weight: 800; }
+  .graph-warning {
+    margin-top: 18px; background: var(--danger-bg); border: 1px solid var(--danger-border);
+    border-left: 3px solid var(--danger); border-radius: 6px; padding: 12px 16px;
+    font-size: 0.86rem; color: #ffd5da;
+  }
+  .graph-warning strong { color: #fff0f2; }
+
+  .phases { counter-reset: phase; list-style: none; padding-left: 0; }
+  .phases li {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 16px 12px 52px; margin: 10px 0; position: relative;
+  }
+  .phases li::before {
+    counter-increment: phase; content: counter(phase);
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: #0f1117; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+  }
+
+  .footer {
+    margin-top: 48px; padding: 16px 20px; background: var(--panel);
+    border-radius: 8px; color: var(--muted); font-size: 0.88rem; font-style: italic;
+  }
+
+  /* ===== Architecture diagram ===== */
+  .diagram { display: flex; flex-direction: column; align-items: center; width: 100%; margin: 8px 0 4px; }
+  .entry {
+    background: var(--panel); border: 2px solid var(--accent); border-radius: 10px;
+    padding: 13px 20px; text-align: center; font-weight: 700; max-width: 320px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.28);
+  }
+  .entry .sub { display: block; font-weight: 400; font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+  .container-shell {
+    width: 100%; border: 1px solid var(--line); border-radius: 14px;
+    background: rgba(255,255,255,0.025); padding: 14px 16px 18px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .container-title {
+    color: var(--muted); font-size: 0.78rem; font-weight: 600; text-align: center;
+    text-transform: uppercase; letter-spacing: 0; margin-bottom: 12px;
+  }
+  .orchestrator {
+    background: var(--orch); border: 2px solid var(--orch-border); border-radius: 12px;
+    padding: 16px 26px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.4); max-width: 520px; margin: 0 auto;
+  }
+  .orchestrator .title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+  .orchestrator ul { list-style: none; margin: 0; padding: 0; color: var(--muted); font-size: 0.84rem; text-align: left; display: inline-block; }
+  .orchestrator li::before { content: "• "; color: var(--orch-border); }
+  .connector-label { color: var(--muted); font-size: 0.75rem; font-style: italic; margin: 10px 0 2px; }
+  .vline { width: 2px; height: 18px; background: var(--line); margin: 0 auto; }
+  .fanout {
+    position: relative; display: grid; gap: 12px; width: 100%; max-width: 880px;
+    height: 24px; margin: 0 auto;
+  }
+  .fanout::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0;
+    height: 2px; background: var(--line);
+  }
+  .fanout-4 { grid-template-columns: repeat(4, 1fr); }
+  .fanout-5 { grid-template-columns: repeat(5, 1fr); }
+  .fanout-stem {
+    width: 2px; height: 24px; background: var(--line);
+    justify-self: center; z-index: 1;
+  }
+  .row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; width: 100%; max-width: 880px; }
+  .col { display: flex; flex-direction: column; align-items: center; }
+  .card { width: 100%; border-radius: 10px; padding: 13px 8px; text-align: center; font-weight: 600; font-size: 0.92rem; }
+  .agent { background: var(--agent); border: 2px solid var(--agent-border); }
+  .agent .sub { display: block; font-weight: 400; font-size: 0.74rem; color: var(--muted); margin-top: 4px; }
+  .down { width: 2px; height: 20px; background: var(--line); margin: 6px 0; }
+  .source { background: var(--source); border: 1px solid var(--source-border); border-radius: 8px; padding: 8px 6px; font-size: 0.8rem; width: 100%; text-align: center; }
+  .component-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; width: 100%; max-width: 880px; margin: 0 auto; }
+  .component { background: var(--rag); border: 2px solid var(--rag-border); border-radius: 10px; padding: 12px 10px; text-align: center; }
+  .component .title { font-weight: 700; margin-bottom: 4px; font-size: 0.9rem; }
+  .component .sub { font-size: 0.74rem; color: var(--muted); }
+  .external-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 880px; margin-top: 10px; }
+  .external { background: var(--source); border: 1px solid var(--source-border); border-radius: 8px; padding: 9px 8px; text-align: center; font-size: 0.8rem; }
+  .rag-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .rag { background: var(--rag); border: 2px solid var(--rag-border); border-radius: 10px; padding: 13px 20px; text-align: center; max-width: 260px; }
+  .rag .title { font-weight: 700; margin-bottom: 4px; }
+  .rag .sub { font-size: 0.76rem; color: var(--muted); }
+  .callout {
+    margin-top: 18px; background: var(--panel); border-left: 3px solid var(--agent-border);
+    border-radius: 6px; padding: 12px 16px; font-size: 0.85rem; color: var(--muted);
+  }
+  .callout strong { color: var(--text); }
+
+  @media (max-width: 680px) {
+    .row, .component-row, .external-row, .fanout { grid-template-columns: repeat(2, 1fr); }
+    .fanout { display: none; }
+    .container-shell { padding: 12px 10px 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Mes — Hermes Agent Planning Document</h1>
+  <p class="lede">Planning &amp; reference document</p>
+
+  <div class="purpose">
+    <strong>Purpose of this doc:</strong> A reference and direction-setter for building
+    "Mes," a personal Hermes Agent profile/distribution. This is a <em>guiding</em> document,
+    not a rigid spec. An implementing agent should treat it as intent + guardrails, and is
+    free to make better implementation choices where they serve the goals below.
+    <br><br>
+    <strong>Implementation detail:</strong> This document should stay mid-to-high level.
+    Lower-level commands, candidate packages, schemas, and templates live in
+    <code>Mes-Implementation-Notes.md</code> and must be re-checked against official docs before use.
+  </div>
+
+  <h2>1. Vision</h2>
+  <p>Mes is a named Hermes Agent profile/distribution that helps with day-to-day work tasks. It acts
+  <strong>as the user</strong> (delegated identity), runs <strong>locally</strong> through
+  Hermes-supported local/container execution, and orchestrates sub-agents and tools to read,
+  summarize, research, and (eventually) take action across the user's work ecosystem.</p>
+  <p>For now, Mes should be a <strong>terminal-first</strong> tool. The CLI is the main
+  entry point for chat, one-off commands, ingestion jobs, summaries, and admin/config tasks.
+  A web UI can come later if the CLI workflows prove useful.</p>
+  <p><strong>Guiding principles:</strong></p>
+  <ul>
+    <li><strong>Least privilege first.</strong> Read-only before write. Scoped credentials per capability.</li>
+    <li><strong>Acts as the user.</strong> Delegated permissions — Mes can only see/do what the user can.</li>
+    <li><strong>Local &amp; private.</strong> Runs on the user's local machine; no inbound exposure.</li>
+    <li><strong>CLI-first.</strong> Optimize the early product for fast terminal workflows before building a UI.</li>
+    <li><strong>Composable.</strong> Capabilities added in phases; sub-agents own narrow domains.</li>
+    <li><strong>Hermes-native first.</strong> Use profile/distribution, config, MCP, sessions, skills, delegation, logs, and model routing built into Hermes before adding custom Mes code.</li>
+    <li><strong>Not over-constrained.</strong> Implementation details are suggestions; optimize for the goals.</li>
+  </ul>
+
+  <h2>2. Decisions Already Made</h2>
+  <table>
+    <tr><th>Topic</th><th>Decision</th></tr>
+    <tr><td>Identity model</td><td><strong>Delegated</strong> — acts as the user, not a service principal</td></tr>
+    <tr><td>Hosting</td><td><strong>Local machine</strong>, Docker container</td></tr>
+    <tr><td>Primary entry point</td><td><strong>Terminal / CLI</strong> for the initial product</td></tr>
+    <tr><td>Harness</td><td><strong>Hermes Agent</strong> — the runtime harness for Mes's agent loop, model use, tool calling, and sub-agent orchestration.</td></tr>
+    <tr><td>Product shape</td><td><strong>Hermes profile distribution</strong> — Mes is a named profile with repo-backed config, skills, MCP setup, personality, and docs using Hermes's native distribution layout. Do not start by creating a separate wrapper application or custom package format.</td></tr>
+    <tr><td>Setup path</td><td><strong>Hermes-native install/update</strong> — build Mes from a working local profile and publish it as a native Hermes profile distribution.</td></tr>
+    <tr><td>V1 boundary</td><td><strong>Hermes profile first</strong> — V1 includes repo-backed docs and native profile-distribution files, approved MCP setup for Obsidian, Azure DevOps, Azure cloud read-only context, GitHub read/proposal workflows, bounded sub-agent delegation, and parent-selected model routes. It excludes Graph email/Teams, RAG, Kanban, recursive agents, direct Azure mutation, and code-writing.</td></tr>
+    <tr><td>Repository boundary</td><td><strong>Profile repo only</strong> — back up Mes profile/distribution assets, not runtime state and not the Obsidian vault. Obsidian gets its own backup/sync path such as Dropbox, its own repo, or another cloud system.</td></tr>
+    <tr><td>Model routing</td><td><strong>LiteLLM proxy</strong> — use the existing proxy as the model gateway</td></tr>
+    <tr><td>Microsoft Graph access</td><td><span class="status status-blocked">Constrained / admin-gated</span> Applies to Microsoft 365 service-backed adapters broadly, not just Teams or meetings. Do not make Graph a Phase 1 dependency.</td></tr>
+    <tr><td>Teams service data</td><td><span class="status status-blocked">Graph-dependent</span> Chats, channel messages, meetings, transcripts, and related Teams service artifacts are in scope only if delegated Graph access becomes practical; use manual exports/notes first.</td></tr>
+    <tr><td>Notes system</td><td><strong>Obsidian vault</strong> — Markdown-first notes; RAG later if needed</td></tr>
+    <tr><td>Shared knowledge source</td><td><strong>Obsidian read-mostly by default</strong> — the main agent and sub-agents can use Obsidian as shared context; writes remain constrained to explicit task contracts.</td></tr>
+    <tr><td>Long-term memory split</td><td><strong>Hermes memory + Obsidian</strong> — Hermes <code>MEMORY.md</code>/<code>USER.md</code> stay tiny and high-signal for preferences, environment facts, and how Mes should use the vault. Obsidian stores richer work knowledge.</td></tr>
+    <tr><td>Task surfaces</td><td><strong>Obsidian todos now, Hermes Kanban later</strong> — Obsidian is the human-editable todo surface; Hermes Kanban becomes the durable agent work queue when multi-agent coordination needs it.</td></tr>
+    <tr><td>Recurring research</td><td><strong>Weekly briefing</strong> — Mes should be able to produce a dated, source-linked weekly briefing on user-selected topics. Start with work-adjacent signals, new AI models, software engineering news, and broader industry updates. Prove the prompt/source policy manually before scheduling it through Hermes cron.</td></tr>
+    <tr><td>Operational state</td><td><strong>Hermes-native first</strong> — use Hermes runtime state and inspection surfaces before adding Mes-specific state. Keep operational data out of Obsidian.</td></tr>
+    <tr><td>MCP control plane posture</td><td><strong>Mes-owned policy over Hermes MCP config</strong> — Mes directly uses approved MCP servers for Azure DevOps, Azure cloud, GitHub, Obsidian, and research through Hermes-native MCP support; default every external system to read-only unless a later phase enables writes.</td></tr>
+    <tr><td>Intake email schema</td><td><span class="status status-blocked">Graph/mail blocked</span> Out of scope until email read/intake access is feasible; revisit after the Graph feasibility spike.</td></tr>
+    <tr><td>Write actions</td><td><strong>Proposal-first</strong> — draft emails and ADO work items before sending/creating; direct writes are deferred until approval policy is proven.</td></tr>
+  </table>
+
+  <h2>3. Capabilities (Target State)</h2>
+
+  <h3>Read / Ingest</h3>
+  <ul>
+    <li><span class="red-check">&#10003;</span>Read user's <strong>emails</strong> or run email intake automation only if Microsoft Graph delegated mail access becomes available; otherwise treat email read/intake as deferred.</li>
+    <li><span class="red-check">&#10003;</span>Read <strong>Teams service data</strong> only if Graph access is approved. This includes chats, channel messages, meetings, transcripts, and related meeting artifacts; transcripts also require retention and user-visible rights.</li>
+    <li>Ingest manually exported emails, meeting notes, or transcript files into Obsidian/Markdown as the near-term fallback path.</li>
+    <li>Read and maintain <strong>Obsidian notes</strong> from a local vault using a Markdown-first system; optionally add RAG later.</li>
+    <li>Read <strong>Azure DevOps</strong> work items, wiki, repos, pull requests, builds, pipelines, iterations, and test plans through an approved MCP path where practical.</li>
+    <li>Read <strong>Azure cloud</strong> resource inventory, storage metadata, app configuration, logs, and diagnostics through Azure MCP in read-only mode with approved service scope.</li>
+    <li>Read <strong>GitHub</strong> wiki and repos</li>
+    <li><strong>Query Entra</strong> for people and team context through the user's existing approved access path.</li>
+    <li>Search public web/news sources for recurring briefing topics, with source links and date filters. Do not leak internal/private work terms into public search unless the user explicitly approves that scope.</li>
+  </ul>
+
+  <h3>Reason / Produce</h3>
+  <ul>
+    <li><strong>Summarize</strong> emails, meetings, notes</li>
+    <li><strong>Research mode</strong> — strong internet research</li>
+    <li><strong>Model routing via LiteLLM</strong> — pick the right proxy model alias per task (cheap/fast for extraction &amp; classification; strong for summarization &amp; planning)</li>
+    <li><strong>Sub-agents</strong> — the main agent can create bounded task-focused sub-agents, choose their model route, and delegate only the MCP access needed for the task. V1 should not allow recursive delegation.</li>
+    <li><strong>Planning &amp; proposals</strong> — make plans, propose actions, and prepare coding handoff documents for separate coding agents or humans</li>
+    <li><strong>Weekly briefing</strong> — produce a concise, dated research artifact covering user-selected topics such as work-adjacent updates, new AI models, software engineering news, and relevant industry movement.</li>
+    <li><strong>Todo list with notes</strong> — keep human-editable todos and follow-ups in Obsidian, with links back to notes and source artifacts. Mes must tolerate the user directly editing these todos.</li>
+    <li><strong>Agent work queue</strong> — add Hermes Kanban when tasks need durable assignment, retries, worker profiles, cross-agent handoff, or long-running coordination.</li>
+    <li>Answer composite queries, e.g. <em>"What was X meeting about, and is there anything I need to do?"</em> using the Markdown knowledge base, transcripts, and todo state; add RAG only if direct file/wiki lookup is insufficient</li>
+  </ul>
+
+  <h3>Act (Later Phases)</h3>
+  <ul>
+    <li>Draft emails</li>
+    <li>Draft Azure DevOps work items with proposed fields, links, sprint/iteration placement, and rationale; create/update only after user approval.</li>
+    <li>Draft GitHub issues, PR comments/reviews, and coding handoff documents before posting or acting. Mes and its sub-agents should not edit code directly.</li>
+    <li>Do not mutate Azure cloud resources. Azure MCP is for read-only inventory, logs, service details, diagnostics, and command/runbook suggestions.</li>
+    <li>Intake email ingestion and extraction only after Graph/mail access is feasible.</li>
+  </ul>
+
+  <h2>4. Suggested Architecture <span class="tag">(Non-binding)</span></h2>
+
+  <div class="diagram">
+    <div class="entry">Terminal / CLI<span class="sub"><code>mes</code> commands, chat, batch jobs</span></div>
+    <div class="connector-label">invokes local command</div>
+    <div class="vline"></div>
+
+    <div class="container-shell">
+      <div class="container-title">Local Docker Container</div>
+
+      <div class="orchestrator">
+        <div class="title">Mes Hermes Profile</div>
+        <ul>
+          <li>Hermes Agent runtime harness</li>
+          <li>Hermes CLI/profile behavior</li>
+          <li>Planning / proposals</li>
+          <li>Model routing via LiteLLM</li>
+          <li>Tool and bounded sub-agent coordination</li>
+          <li>Todo + notes state</li>
+        </ul>
+      </div>
+
+      <div class="connector-label">coordinates sub-agents</div>
+      <div class="vline"></div>
+      <div class="fanout fanout-5">
+        <div class="fanout-stem"></div>
+        <div class="fanout-stem"></div>
+        <div class="fanout-stem"></div>
+        <div class="fanout-stem"></div>
+        <div class="fanout-stem"></div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="card agent">Email Agent</div>
+          <div class="down"></div>
+          <div class="source"><span class="status status-blocked">Graph/mail gated</span><br>intake blocked; fallback import</div>
+        </div>
+        <div class="col">
+          <div class="card agent">Teams Service<span class="sub">chats, meetings, transcripts</span></div>
+          <div class="down"></div>
+          <div class="source"><span class="status status-blocked">Graph gated</span><br>manual notes/exports first</div>
+        </div>
+        <div class="col">
+          <div class="card agent">DevOps / GitHub<span class="sub">tickets, wiki, repos</span></div>
+          <div class="down"></div>
+          <div class="source">ADO / GH APIs</div>
+        </div>
+        <div class="col">
+          <div class="card agent">Notes Agent<span class="sub">Obsidian vault</span></div>
+          <div class="down"></div>
+          <div class="source">Local Markdown</div>
+        </div>
+        <div class="col">
+          <div class="card agent">Research Agent</div>
+          <div class="down"></div>
+          <div class="source">Hermes/MCP search</div>
+        </div>
+      </div>
+
+      <div class="connector-label">uses local services and shared state</div>
+      <div class="vline"></div>
+      <div class="fanout fanout-5">
+        <div class="fanout-stem"></div>
+        <div class="fanout-stem"></div>
+        <div class="fanout-stem"></div>
+        <div class="fanout-stem"></div>
+        <div class="fanout-stem"></div>
+      </div>
+      <div class="component-row">
+        <div class="component">
+          <div class="title">Append / Review</div>
+          <div class="sub">low-friction capture note</div>
+        </div>
+        <div class="component">
+          <div class="title">Markdown Wiki</div>
+          <div class="sub">LLM-maintained Obsidian pages</div>
+        </div>
+        <div class="component">
+          <div class="title">Todo State</div>
+          <div class="sub">Obsidian todos now; Kanban later</div>
+        </div>
+        <div class="component">
+          <div class="title">Model Client</div>
+          <div class="sub">calls LiteLLM proxy aliases</div>
+        </div>
+        <div class="component">
+          <div class="title">RAG Index Later</div>
+          <div class="sub">optional vector retrieval</div>
+        </div>
+      </div>
+
+      <div class="connector-label">interacts with external or mounted systems</div>
+      <div class="external-row">
+        <div class="external"><span class="status status-blocked">Graph gated</span><br>Email read/intake, Teams service data, transcripts</div>
+        <div class="external">Obsidian Vault<br>read-mostly, constrained writes</div>
+        <div class="external">Azure DevOps / GitHub<br>work items, repos, wiki</div>
+        <div class="external">Azure Cloud MCP<br>read-only resource context</div>
+        <div class="external">Hermes Tools / MCP<br>research mode + adapters</div>
+        <div class="external">Entra Script<br>people and teams lookup</div>
+        <div class="external">LiteLLM Proxy<br>model providers and fallbacks</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>CLI-first control plane:</strong> The terminal should be the initial user
+    interface. Favor Hermes profile commands and aliases before adding custom CLI code.
+  </div>
+
+  <div class="graph-warning">
+    <strong><span class="red-check">&#10003;</span>Graph access warning:</strong>
+    Microsoft Graph email, Teams service, and transcript access may require tenant/admin consent
+    that is not easy to obtain. This is not only a Teams/meeting issue: it also blocks
+    email read/intake automation and any adapter that depends on Microsoft 365/Graph-backed
+    service data. Treat these agents as optional adapters, not core plumbing.
+    The first useful system should work from the CLI, Obsidian Markdown, manual exports,
+    local files, ADO/GitHub access, and the existing Entra script.
+  </div>
+
+  <h2>5. Security &amp; Auth Posture</h2>
+  <p>Mes should stay local, delegated, and least-privilege. The first useful version should work without broad Microsoft Graph access and without any Azure cloud mutation capability.</p>
+  <ul>
+    <li><strong>Delegated identity:</strong> Mes acts as the user and should only see or do what the user can already access.</li>
+    <li><strong>Read-only default:</strong> External systems start read-only. ADO and GitHub writes are proposal-first; Azure cloud remains read-only.</li>
+    <li><strong>Runtime secrets:</strong> Keep tokens and provider credentials out of the profile repo and image. Prefer runtime-mounted secrets and scoped credentials.</li>
+    <li><strong>Graph dependency:</strong> Microsoft 365 email, Teams service data, and transcripts are deferred until delegated Graph access is realistically available.</li>
+    <li><strong>State boundary:</strong> Human knowledge belongs in Obsidian. Operational state belongs in Hermes/Mes runtime state.</li>
+  </ul>
+
+  <h2>6. Operating Model</h2>
+  <p>Mes should begin as a Hermes profile distribution, not a separate application. Use Hermes-native profile, MCP, skill, cron, memory, session, delegation, and model-routing behavior before adding Mes-specific wrappers.</p>
+  <ul>
+    <li><strong>Primary surface:</strong> Terminal-first through the Mes Hermes profile, with a thin alias only if it improves daily use.</li>
+    <li><strong>Model gateway:</strong> Route through LiteLLM aliases so providers and concrete model names can change outside Mes.</li>
+    <li><strong>Sub-agents:</strong> The main agent may create bounded task-focused sub-agents, choose their model route, and delegate only the MCPs needed for the task.</li>
+    <li><strong>Recurring work:</strong> Start recurring research and summaries manually; schedule through Hermes cron only after the output is useful and explicitly approved.</li>
+    <li><strong>Inspection:</strong> Prefer Hermes-native logs, sessions, MCP status, and agent surfaces before inventing Mes-specific operational tooling.</li>
+  </ul>
+
+  <h2>7. Integration Posture</h2>
+  <table>
+    <tr><th>Area</th><th>Posture</th></tr>
+    <tr><td>Obsidian</td><td>Default shared knowledge source. Read-mostly; constrained writes for capture, outputs, and handoffs only after the write policy is clear.</td></tr>
+    <tr><td>Azure DevOps</td><td>Read work items, repos, wiki, pipelines, iterations, and board context through an approved MCP path. Draft work item changes before creating or updating anything.</td></tr>
+    <tr><td>Azure cloud</td><td>Read-only resource context for inventory, configuration, logs, diagnostics, and service details. No Azure resource mutation by Mes.</td></tr>
+    <tr><td>GitHub</td><td>Read scoped repos and related project context. Draft issues, comments, and reviews before posting; do not push code.</td></tr>
+    <tr><td>Microsoft Graph</td><td>Deferred for email, Teams service data, and transcripts until delegated access and tenant consent are practical.</td></tr>
+    <tr><td>Research</td><td>Use web/search tooling for source-linked research and weekly briefings, with care not to leak private work terms into public search.</td></tr>
+  </table>
+
+  <h2>8. Key Workflows</h2>
+  <ul>
+    <li><strong>ADO drafting:</strong> Use live ADO data plus human-maintained board context to propose work item changes. User approval is required before any write.</li>
+    <li><strong>Coding handoffs:</strong> Mes and sub-agents prepare handoff documents for humans or separate coding tools; they do not edit code directly.</li>
+    <li><strong>Weekly briefings:</strong> Produce curated, dated, source-linked briefings on user-selected topics such as work-adjacent developments, AI models, software engineering, and industry news.</li>
+    <li><strong>Obsidian knowledge:</strong> Keep Obsidian as human-readable knowledge, todos, summaries, and decisions. Avoid turning it into a hidden operational database.</li>
+    <li><strong>Kanban later:</strong> Use Hermes Kanban only when work needs durable agent assignment, retry/block state, comments, or multi-run coordination.</li>
+  </ul>
+
+  <h2>9. V1 Boundary</h2>
+  <p>V1 should prove Mes as a useful Hermes profile distribution. It should launch locally, load approved MCPs, answer questions over local and developer-system context, draft external work without directly mutating it, and delegate bounded sub-agent work with parent-selected model routes.</p>
+  <table>
+    <tr><th>Included in V1</th><th>Excluded from V1</th></tr>
+    <tr>
+      <td>Hermes profile/distribution assets, Obsidian shared knowledge access, ADO/GitHub/Azure read context, LiteLLM model aliases, bounded sub-agent delegation, proposal-first external writes, coding handoffs, and manual weekly briefing workflow.</td>
+      <td>Microsoft Graph email/Teams dependency, automatic email intake, RAG/vector indexing, Hermes Kanban, recursive agents, direct Azure resource mutation, Mes-authored code changes, and broad unattended note editing.</td>
+    </tr>
+  </table>
+  <p><strong>V1 done criteria:</strong> Mes can launch as a Hermes profile, load approved MCPs, query Obsidian plus Azure DevOps, GitHub, and Azure cloud read-only context, produce an Obsidian handoff or output artifact, and delegate one bounded sub-agent with a selected model route and restricted delegated MCP set.</p>
+
+  <h2>10. Phased Direction</h2>
+  <ol class="phases">
+    <li><strong>Local read-only foundation:</strong> Establish the Hermes profile distribution, model routing, Obsidian read access, manual artifact ingestion, and basic summarization.</li>
+    <li><strong>Developer-system context:</strong> Add approved read paths for Azure DevOps, GitHub, Azure cloud, and Entra context.</li>
+    <li><strong>Planning outputs:</strong> Make ADO drafts, GitHub drafts, coding handoffs, and weekly briefings useful before enabling any recurring or write behavior.</li>
+    <li><strong>Coordination expansion:</strong> Add Hermes Kanban, RAG, Graph-backed sources, and more automation only after local workflows prove their value.</li>
+  </ol>
+
+  <h2>11. Open Decisions</h2>
+  <ul>
+    <li><strong>Profile shape:</strong> Finalize the first native Hermes profile distribution repo contents.</li>
+    <li><strong>MCP policy:</strong> Decide whether Hermes-native MCP config is enough or whether Mes needs a thin policy layer around approved servers and delegated MCP sets.</li>
+    <li><strong>Obsidian scope:</strong> Choose the vault path, readable folders, and constrained write locations.</li>
+    <li><strong>ADO context:</strong> Define where stable board conventions live and how dynamic sprint context is maintained.</li>
+    <li><strong>Weekly briefing:</strong> Define the editable topic set, source preferences, privacy exclusions, and when the workflow is ready for scheduling.</li>
+    <li><strong>Graph feasibility:</strong> Confirm whether delegated Graph access is realistic before planning email or Teams service integrations.</li>
+  </ul>
+
+  <div class="footer">
+    This document is intended as direction and context. An implementing agent should follow
+    the intent and guardrails (least privilege, delegated identity, local hardened container,
+    phased rollout) while remaining free to choose better implementation details where warranted.
+  </div>
+
+</div>
+</body>
+</html>

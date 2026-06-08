@@ -1,0 +1,7 @@
+[codex.files]
+".dotter/targets/codex/custom" = "~/.agents/skills"
+".dotter/targets/codex/vendor" = "~/.agents/skills"
+
+[claude.files]
+".dotter/targets/claude/custom" = "~/.claude/skills"
+".dotter/targets/claude/vendor" = "~/.claude/skills"

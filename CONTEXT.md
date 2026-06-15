@@ -45,7 +45,7 @@ The primary Mes agent that receives the user's request, plans the work, chooses 
 _Avoid_: Root bot, supervisor unless a concrete supervisor abstraction exists
 
 **Sub-agent**:
-A task-focused agent spawned by the Main Agent for bounded work. The spawning parent chooses the Sub-agent's model route based on the task and any user instruction. A Sub-agent receives an explicit subset of the parent's approved MCP access and may receive multiple MCPs when the task requires it. In the first version, Sub-agents do not spawn other Sub-agents.
+A bounded-scope agent spawned by the Main Agent for a specific task. The spawning parent chooses the Sub-agent's model route based on the task and any user instruction. A Sub-agent receives an explicit subset of the parent's approved MCP access and may receive multiple MCPs when the task requires it. In the first version, Sub-agents do not spawn other Sub-agents.
 _Avoid_: Worker unless the implementation uses that term
 
 **Model Route**:

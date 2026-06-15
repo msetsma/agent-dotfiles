@@ -252,7 +252,7 @@
     <li><strong>Summarize</strong> emails, meetings, notes</li>
     <li><strong>Research mode</strong> — strong internet research</li>
     <li><strong>Model routing via LiteLLM</strong> — pick the right proxy model alias per task (cheap/fast for extraction &amp; classification; strong for summarization &amp; planning)</li>
-    <li><strong>Sub-agents</strong> — the main agent can create bounded task-focused sub-agents, choose their model route, and delegate only the MCP access needed for the task. V1 should not allow recursive delegation.</li>
+    <li><strong>Sub-agents</strong> — the main agent can create bounded-scope sub-agents for specific tasks, choose their model route, and delegate only the MCP access needed for the task. V1 should not allow recursive delegation.</li>
     <li><strong>Planning &amp; proposals</strong> — make plans, propose actions, and prepare coding handoff documents for separate coding agents or humans</li>
     <li><strong>Weekly briefing</strong> — produce a concise, dated research artifact covering user-selected topics such as work-adjacent updates, new AI models, software engineering news, and relevant industry movement.</li>
     <li><strong>Todo list with notes</strong> — keep human-editable todos and follow-ups in Obsidian, with links back to notes and source artifacts. Mes must tolerate the user directly editing these todos.</li>
@@ -404,7 +404,7 @@
   <ul>
     <li><strong>Primary surface:</strong> Terminal-first through the Mes Hermes profile, with a thin alias only if it improves daily use.</li>
     <li><strong>Model gateway:</strong> Route through LiteLLM aliases so providers and concrete model names can change outside Mes.</li>
-    <li><strong>Sub-agents:</strong> The main agent may create bounded task-focused sub-agents, choose their model route, and delegate only the MCPs needed for the task.</li>
+    <li><strong>Sub-agents:</strong> The main agent may create bounded-scope sub-agents for specific tasks, choose their model route, and delegate only the MCPs needed for the task.</li>
     <li><strong>Recurring work:</strong> Start recurring research and summaries manually; schedule through Hermes cron only after the output is useful and explicitly approved.</li>
     <li><strong>Inspection:</strong> Prefer Hermes-native logs, sessions, MCP status, and agent surfaces before inventing Mes-specific operational tooling.</li>
   </ul>

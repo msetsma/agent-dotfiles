@@ -1,0 +1,15 @@
+profile: "work"
+extends: "config/hermes/base.yaml"
+model:
+  provider: "openai-api"
+  default: "mock-work-safe"
+runtime:
+  host: "127.0.0.1"
+messaging:
+  enabled: false
+cron:
+  enabled: true
+sources:
+  sanitized_mail_fixture_dir: "/sources/fixtures/mail"
+  sanitized_transcript_fixture_dir: "/sources/fixtures/transcripts"
+  sanitized_onedrive_fixture_dir: "/sources/fixtures/onedrive"

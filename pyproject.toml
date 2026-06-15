@@ -1,0 +1,35 @@
+[project]
+name = "hermes-assistant"
+version = "0.1.0"
+description = "Personal/work Hermes assistant profiles, orchestration, and retrieval services."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "fastapi==0.133.1",
+  "hermes-agent[anthropic,azure-identity,cron,web]==0.16.0",
+  "httpx==0.28.1",
+  "pydantic==2.13.4",
+  "pyyaml==6.0.3",
+  "uvicorn[standard]==0.41.0",
+]
+
+[dependency-groups]
+dev = [
+  "mypy==1.19.0",
+  "pytest==9.0.2",
+  "pytest-asyncio==1.3.0",
+  "ruff==0.15.10",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+files = ["services", "tests"]

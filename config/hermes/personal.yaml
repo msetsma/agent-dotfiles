@@ -1,0 +1,14 @@
+profile: "personal"
+extends: "config/hermes/base.yaml"
+model:
+  provider: "openai-api"
+  default: "mock-work-safe"
+  production_provider: "anthropic"
+messaging:
+  enabled: true
+  telegram_enabled: false
+cron:
+  enabled: true
+sources:
+  obsidian_vault: "/sources/obsidian"
+  github: "read_only"

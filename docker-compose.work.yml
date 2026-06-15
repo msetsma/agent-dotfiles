@@ -1,0 +1,28 @@
+services:
+  hermes-work:
+    build:
+      context: .
+      dockerfile: services/hermes/Dockerfile
+    profiles: ["work"]
+    depends_on:
+      mock-model:
+        condition: service_healthy
+    environment:
+      - HERMES_HOME=/opt/data/work
+      - OPENAI_API_KEY=mock
+      - OPENAI_BASE_URL=http://mock-model:8080/v1
+      - HERMES_PROFILE=work
+    volumes:
+      - hermes-work-state:/opt/data/work
+      - ./config/hermes:/workspace/config/hermes:ro
+      - ./config/work:/workspace/config/work:ro
+      - ./skills:/workspace/skills:ro
+    ports:
+      - "127.0.0.1:19119:9119"
+    command:
+      - python
+      - -c
+      - import importlib.metadata; print(importlib.metadata.version('hermes-agent'))
+
+volumes:
+  hermes-work-state: {}

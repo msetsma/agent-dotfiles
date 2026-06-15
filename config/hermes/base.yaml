@@ -1,0 +1,11 @@
+hermes_agent_version: "0.16.0"
+hermes_agent_release_tag: "v2026.6.5"
+terminal:
+  backend: "docker"
+  cwd: "/workspace"
+memory:
+  profile: "isolated"
+runtime:
+  host: "127.0.0.1"
+  dashboard_port: 9119
+  api_port: 9120

@@ -1,0 +1,5 @@
+# Direct dependency pins for the local mock model image.
+# Transitive dependency locking is tracked as a follow-up; do not add real secrets here.
+fastapi==0.133.1
+pydantic==2.13.4
+uvicorn[standard]==0.41.0

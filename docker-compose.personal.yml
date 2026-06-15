@@ -1,0 +1,25 @@
+services:
+  hermes-personal:
+    build:
+      context: .
+      dockerfile: services/hermes/Dockerfile
+    profiles: ["personal"]
+    depends_on:
+      mock-model:
+        condition: service_healthy
+    environment:
+      - HERMES_HOME=/opt/data/personal
+      - OPENAI_API_KEY=mock
+      - OPENAI_BASE_URL=http://mock-model:8080/v1
+      - HERMES_PROFILE=personal
+    volumes:
+      - hermes-personal-state:/opt/data/personal
+      - ./config/hermes:/workspace/config/hermes:ro
+      - ./skills:/workspace/skills:ro
+    command:
+      - python
+      - -c
+      - import importlib.metadata; print(importlib.metadata.version('hermes-agent'))
+
+volumes:
+  hermes-personal-state: {}

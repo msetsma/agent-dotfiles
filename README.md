@@ -99,6 +99,8 @@ skills/vendor/some-external-skill/SKILL.md
 
 Skill folder names must be unique across `skills/custom` and `skills/vendor`, because both directories deploy into the same target directory for each agent.
 
+Some external skills ship their own installer that writes into the agent skill trees directly. Do not vendor those here — Dotter would collide with the installer-owned directories, and the agent would load the skill twice. Record them in `docs/tooling.md` instead. Caveman is the current example.
+
 ## Notes
 
 - Do not put secrets in this repo.
